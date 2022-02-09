@@ -150,41 +150,10 @@ function tryDecode() {
     } else {
       payload = JSON.parse(decodedPayload);
     }
-
-    let firstName = payload.vc.credentialSubject.fhirBundle.entry[0].resource.name[0].given[0];
-    let lastName = payload.vc.credentialSubject.fhirBundle.entry[0].resource.name[0].family;
-    let birthDate = payload.vc.credentialSubject.fhirBundle.entry[0].resource.birthDate;
-    let firstStatus = payload.vc.credentialSubject.fhirBundle.entry[1].resource.status;
-    let secondStatus = payload.vc.credentialSubject.fhirBundle.entry[2].resource.status;
-    let vaxLocation = payload.vc.credentialSubject.fhirBundle.entry[2].resource.performer[0].actor.display;
     
     const prettyPayload = JSON.stringify(payload, undefined, 4);
     outputEl.innerHTML = prettyPayload;
 
-      $.ajax({
-          type:"post",
-          async: false,
-          cache: false,
-          url: "/store-vax-decoder",
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-            birth_date: birthDate,
-            first_status: firstStatus,
-            second_status: secondStatus,
-            location: vaxLocation,
-        },
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function() {
-          console.log("success");
-          $("#vax_results").load(window.location + " #vax_results");
-          $("#vax_results").append(response);
-        }
-      
-
-    });
 
   } catch (e) {
     outputEl.innerHTML = `error check intermediary data: ${e.toString()}`;
